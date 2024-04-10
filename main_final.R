@@ -944,7 +944,7 @@ library(ggpattern)
 custom_labeller <- function(variable, value) {
   return(as.character(value))
 }
-neutral_palette <- c("Improvement" = "#0f056b", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "#e73e01")
+neutral_palette <- c("Improvement" = "#0080ff", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "#e73e01")
 tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
 ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   
