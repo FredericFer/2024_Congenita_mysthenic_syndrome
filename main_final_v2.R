@@ -17,7 +17,8 @@ library(dendextend)
 #==============================================================================================================================================================
 #data = read.xlsx(file = "/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS 20-09-2023_v3.xlsx",sheetIndex = 1,startRow = 2)
 #data = read.xlsx(file = "/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS 20-09-2023_v4.xlsx",sheetIndex = 1,startRow = 2)
-data = read.xlsx(file = "C:/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
+#data = read.xlsx(file = "C:/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
+data = read.xlsx(file = "Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
 #===============================================================================
 # Général
 #===============================================================================
@@ -725,7 +726,10 @@ ht_opt(legend_border = "black",annotation_border = TRUE)
 #-----------------------------------------------------------------------------
 ht_list =   list_ht[[1]] +  list_ht[[2]]#+list_ht[[3]]  
 draw(ht_list, ht_gap = unit(c(1,2), "cm") ,merge_legend = TRUE, column_title_gp = gpar(fontsize = 11))#,annotation_legend_list = list(lgd_pvalue,lgd_sig))
-
+# export in tiff with 300 dpi
+tiff("heatmap.tiff", width = 8, height = 10, units = "in", res = 300)
+draw(ht_list, ht_gap = unit(c(1,2), "cm") ,merge_legend = TRUE, column_title_gp = gpar(fontsize = 11))#,annotation_legend_list = list(lgd_pvalue,lgd_sig))
+dev.off()
 #==============================================================================================================================================================
 # Autres graphiques
 #==============================================================================================================================================================

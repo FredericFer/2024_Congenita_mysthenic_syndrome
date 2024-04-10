@@ -17,7 +17,8 @@ library(dendextend)
 #==============================================================================================================================================================
 #data = read.xlsx(file = "/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS 20-09-2023_v3.xlsx",sheetIndex = 1,startRow = 2)
 #data = read.xlsx(file = "/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS 20-09-2023_v4.xlsx",sheetIndex = 1,startRow = 2)
-data = read.xlsx(file = "C:/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
+#data = read.xlsx(file = "C:/Users/f.fer/Documents/1_Projets/20230801_julianT/Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
+data = read.xlsx(file = "Tableur CMS V9_2.xlsx",sheetIndex = 1,startRow = 2)
 #===============================================================================
 # Général
 #===============================================================================
@@ -434,7 +435,7 @@ colnames(metadata) = "Mean age at first symptoms"
 #===============================================================================
 #  Choix des couleurs (décoration à droite + general)
 #===============================================================================
-my_palette <- colorRampPalette(brewer.pal(9, "Greens"))(n = 299) 
+my_palette <- colorRampPalette(brewer.pal(9, "Blues"))(n = 299) 
 AFS_color =colorRamp2(range(metadata$`Mean age at first symptoms`),colors = c("white","#B31A15"))
 #ALS_color =colorRamp2(range(metadata$Mean.age.at.last.visit),colors =  c("white","#4F7ABB"))
 #diag_color =colorRamp2(range(metadata$Mean.diagnostic.wandering.time),colors =  c("white","#FA9203"))
@@ -728,7 +729,7 @@ list_ht[i] <- Heatmap(as.matrix(Symptome_init)*100,  # The Heatmap function take
 ht_opt(legend_border = "black",annotation_border = TRUE)
 #-----------------------------------------------------------------------------
 ht_list =   list_ht[[1]] +  list_ht[[2]]#+list_ht[[3]]  
-tiff(filename = "c://Users/f.fer/Documents/1_Projets/20230801_julianT/heatmap_final2.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
+tiff(filename = "heatmap_final3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 300)
 draw(ht_list, ht_gap = unit(c(1,2), "cm") ,merge_legend = TRUE, column_title_gp = gpar(fontsize = 11))#,annotation_legend_list = list(lgd_pvalue,lgd_sig))
 dev.off()
 #==============================================================================================================================================================
@@ -935,17 +936,30 @@ proportion_data$Treatment <- factor(proportion_data$Treatment, levels = c("AChE 
 proportion_data$gene <- factor(proportion_data$gene, levels = c("CHRNE-LE", "FCCMS", "CHRND","SCCMS","MUSK","AGRN","RAPSN","COLQ","DOK7","GFPT1","GMPPB"))
 proportion_data$gene[is.na(proportion_data$gene)] = "CHRNE-LE"
 #===============================================================================
+if (!requireNamespace("ggpattern", quietly = TRUE)) {
+  install.packages("ggpattern")
+}
+library(ggpattern)
 
 custom_labeller <- function(variable, value) {
   return(as.character(value))
 }
-neutral_palette <- c("Improvement" = "green3", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "red")
-tiff(filename = "c://Users/f.fer/Documents/1_Projets/20230801_julianT/20231208_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
+neutral_palette <- c("Improvement" = "#0f056b", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "#e73e01")
+tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
 ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   
   # Barres de graphique circulaire
-  geom_bar(stat = "identity", width = 1, color = "black") +  # Bordures noires ajoutées
-  
+    geom_bar(stat = "identity", width = 1, color = "black") +  # Bordures noires ajoutées
+    #geom_bar_pattern(stat = "identity", width = 1, color = "black", 
+    #               pattern = ifelse(proportion_data$Outcome == "Worsening", "stripe", "none"),
+    #               pattern_fill = "red", pattern_density = 0.1, pattern_spacing = 0.02,
+    #               pattern_angle = 45) +  # Angle de hachurage
+  geom_bar_pattern(
+    aes(pattern = ifelse(Outcome == "Worsening", "", "Stripe")),
+    stat = "identity", width = 1, color = "black", 
+    pattern_fill = "red", pattern_density = 0.1, pattern_spacing = 0.02,
+    pattern_angle = 45
+  )+
   # Utiliser des coordonnées polaires
   coord_polar("y") +
   
@@ -965,6 +979,7 @@ ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   ) +
   
   # Palette de couleurs plus neutre
+
   scale_fill_manual(values = neutral_palette) +
   
   # Thème esthétique
@@ -981,7 +996,30 @@ ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
     panel.grid.minor = element_line(color = "grey90", size = 0.1)  # Lignes mineures de la grille
   )
 dev.off()
-
+tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
+ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
+  geom_bar(stat = "identity", width = 1, color = "black") +
+  geom_col_pattern(
+    aes(fill = Outcome, pattern = Outcome),
+    pattern_density = 0.1, # Densité des motifs ajustée pour plus de discrétion
+    pattern_spacing = 0.02, # Espacement des motifs ajusté pour plus de discrétion
+    color = "black"
+  ) +
+  coord_polar("y") +
+  facet_grid(Treatment ~ gene, switch = 'y', labeller = custom_labeller) +
+  labs(title = NULL, x = NULL, y = NULL, fill = "Outcome") +
+  scale_fill_manual(values = neutral_palette) +
+  scale_pattern_manual(values = c("Improvement" = "none", "No effect" = "none", "Ongoing" = "none", "Worsening" = "stripe")) +
+  theme_void() +
+  theme(
+    strip.text.x = element_text(face = "bold.italic", size = 14, angle = 0),
+    strip.text.y = element_text(face = "bold", size = 14, angle = 0),
+    strip.background = element_rect(fill = "white", color = "grey10", size = 1),
+    legend.title = element_text(face = "bold", size = 12),
+    legend.text = element_text(size = 10),
+    panel.grid.minor = element_line(color = "grey90", size = 0.1)
+  )
+dev.off()
 #==============================================================================
 # osserman
 tempo = data.frame(
