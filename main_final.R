@@ -944,7 +944,7 @@ library(ggpattern)
 custom_labeller <- function(variable, value) {
   return(as.character(value))
 }
-neutral_palette <- c("Improvement" = "#0080ff", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "#e73e01")
+neutral_palette <- c("Improvement" = "#0080ff", "No effect" = "grey90", "Ongoing" =  "grey90", "Worsening"  = "#ff00ff")
 tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
 ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   
@@ -957,7 +957,7 @@ ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   geom_bar_pattern(
     aes(pattern = ifelse(Outcome == "Worsening", "", "Stripe")),
     stat = "identity", width = 1, color = "black", 
-    pattern_fill = "red", pattern_density = 0.1, pattern_spacing = 0.02,
+    pattern_fill = "#ff00ff", pattern_density = 0.1, pattern_spacing = 0.02,
     pattern_angle = 45
   )+
   # Utiliser des coordonnées polaires
@@ -996,15 +996,15 @@ ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
     panel.grid.minor = element_line(color = "grey90", size = 0.1)  # Lignes mineures de la grille
   )
 dev.off()
-tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 0.001,res = 600)
+tiff(filename = "20241004_graph3.tiff",units = "cm",width = 50,height = 20,pointsize = 10,res = 600)
 ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
   geom_bar(stat = "identity", width = 1, color = "black") +
-  geom_col_pattern(
-    aes(fill = Outcome, pattern = Outcome),
-    pattern_density = 0.1, # Densité des motifs ajustée pour plus de discrétion
-    pattern_spacing = 0.02, # Espacement des motifs ajusté pour plus de discrétion
-    color = "black"
-  ) +
+  #geom_col_pattern(
+  #  aes(fill = Outcome, pattern = Outcome),
+  #  pattern_density = 0.1, # Densité des motifs ajustée pour plus de discrétion
+  #  pattern_spacing = 0.05, # Espacement des motifs ajusté pour plus de discrétion
+  #  color = "black"
+ # ) +
   coord_polar("y") +
   facet_grid(Treatment ~ gene, switch = 'y', labeller = custom_labeller) +
   labs(title = NULL, x = NULL, y = NULL, fill = "Outcome") +
@@ -1017,8 +1017,55 @@ ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
     strip.background = element_rect(fill = "white", color = "grey10", size = 1),
     legend.title = element_text(face = "bold", size = 12),
     legend.text = element_text(size = 10),
-    panel.grid.minor = element_line(color = "grey90", size = 0.1)
+    #legend.position = "bottom",
+    # add stride in the legend
+    legend.key.size = unit(1, "cm"),
+    legend.key.width = unit(1, "cm"),
+    # modifie strip density in the legend
+    # modifie color of the legend
+    #legend.key = element_rect(fill = "white", color = "grey10", size = 0.5),
+    panel.grid.minor = element_line(color = "grey90", size = 0.1),
+    #  # pattern_density = 0.5 pour la legende
   )
+dev.off()
+
+
+
+
+
+
+
+
+
+
+d
+tiff(filename = "20241004_graph3.tiff", units = "cm", width = 50, height = 20, pointsize = 10, res = 600)
+ggplot(proportion_data, aes(x = "", y = prop, fill = Outcome)) +
+  geom_bar(stat = "identity", width = 1, color = "black") +
+  geom_col_pattern(
+    aes(fill = Outcome, pattern = Outcome),
+    pattern_density = 0.1,  # Densité des motifs ajustée pour plus de discrétion
+    pattern_spacing = 0.05,  # Espacement des motifs ajusté pour plus de discrétion
+    color = "black"
+  ) +
+  coord_polar("y") +
+  facet_grid(Treatment ~ gene, switch = 'y', labeller = custom_labeller) +
+  labs(title = NULL, x = NULL, y = NULL, fill = "Outcome") +
+  scale_fill_manual(values = neutral_palette, guide = FALSE) +  # Désactiver la légende automatique
+  scale_pattern_manual(values = c("Improvement" = "none", "No effect" = "none", "Ongoing" = "none", "Worsening" = "stripe"), guide = FALSE) +  # Désactiver la légende automatique
+  theme_void() +
+  theme(
+    strip.text.x = element_text(face = "bold.italic", size = 14, angle = 0),
+    strip.text.y = element_text(face = "bold", size = 14, angle = 0),
+    strip.background = element_rect(fill = "white", color = "grey10", size = 1),
+    panel.grid.minor = element_line(color = "grey90", size = 0.1)
+   
+
+  ) +
+  # Ajouter les éléments de la légende manuellement
+  annotate("rect", xmin = Inf, xmax = Inf, ymin = Inf, ymax = Inf, fill = "color1") +  # Remplacer 'Inf' par des positions spécifiques
+  annotate("text", x = Inf, y = Inf, label = "Improvement", hjust = 0) +  # Ajustez 'Inf' et le texte
+  # Répétez pour chaque élément de légende nécessaire
 dev.off()
 #==============================================================================
 # osserman
